@@ -141,5 +141,5 @@ notebooks/split_search*.json
 setup_log.txt
 
 outputs/
-
+training/weights/
 
