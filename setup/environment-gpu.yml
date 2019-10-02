@@ -44,7 +44,7 @@ dependencies:
   - pandoc
   - pandocfilters
   - pillow
-  - pip
+  - pip>=19.0
   - progress
   - pygments
   - pylint
@@ -60,8 +60,9 @@ dependencies:
   - setuptools=41.0.1
   - tensorboard=1.13.1
   - tensorboardx=1.7
-  - tensorflow-gpu=1.13.1
   - torchvision=0.3.0
   - tqdm
   - yacs
   - yaml
+  - pip:
+    - tensorflow-gpu>=2.0
