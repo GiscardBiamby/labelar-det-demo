@@ -145,4 +145,5 @@ setup_log.txt
 
 outputs/
 training/weights/
-
+data/images/
+data/annotations
