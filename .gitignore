@@ -140,6 +140,9 @@ notebooks/split_search*.json
 **/*.code-workspace
 setup_log.txt
 
+# macOS
+*.DS_Store
+
 outputs/
 training/weights/
 
