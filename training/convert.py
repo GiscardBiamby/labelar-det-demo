@@ -1,3 +1,8 @@
+# Standard Library imports:
+import argparse
+from pathlib import Path
+from typing import Dict
+
 # 3rd Party imports:
 import keras.backend as K
 from keras.layers import *
@@ -80,7 +85,7 @@ class PytorchToKeras(object):
 
 
 """
-We explicitly redefine the Squeezent architecture since Keras has no predefined Squeezent
+We explicitly redefine the Squeezenet architecture since Keras has no predefined Squeezenet
 """
 
 
@@ -156,19 +161,33 @@ def SqueezeNet(input_shape=(224, 224, 3)):
     return model
 
 
-keras_model = SqueezeNet()
+def main(opt):
+    weights_path = Path("./weights")
+    model_path = weights_path / Path(opt.model_path)
+    if not model_path.exists():
+        raise ValueError(f"Invalid model path: {model_path}")
+
+    # PyTorch includes a predefined Squeezenet
+    pytorch_model = squeezenet1_1()
+    print(f"Loading pytorch model: '{model_path}'")
+    pytorch_model.load_state_dict(torch.load(model_path))
+
+    # Convert:
+    keras_model = SqueezeNet()
+    converter = PytorchToKeras(pytorch_model, keras_model)
+    converter.convert((3, 224, 224))
+
+    # Save the weights of the converted keras model for later use
+    converter.save_weights(weights_path / "squeezenet.h5")
 
 
-# Lucky for us, PyTorch includes a predefined Squeezenet
-pytorch_model = squeezenet1_1()
-
-# Load the pretrained model
-pytorch_model.load_state_dict(torch.load("squeezenet.pth"))
-
-# Time to transfer weights
-
-converter = PytorchToKeras(pytorch_model, keras_model)
-converter.convert((3, 224, 224))
-
-# Save the weights of the converted keras model for later use
-converter.save_weights("squeezenet.h5")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model_path",
+        type=str,
+        default="pretrained/squeezenet1_1-f364aa15.pth",
+        help="filename of model to convert",
+    )
+    opt = parser.parse_args()
+    main(opt)
