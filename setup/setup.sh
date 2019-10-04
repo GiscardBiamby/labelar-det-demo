@@ -62,7 +62,7 @@ fi
 
 # Enable using the h4d_env conda environment from jupyter notebooks:
 conda activate labelar_demo
-python -m ipykernel install --user --name h4d_env --display-name "labelar_demo"
+python -m ipykernel install --user --name labelar_demo --display-name "labelar_demo"
 # Install pycocotools:
 cd ../vendor/cocoapi/PythonAPI
 python3 setup.py build_ext install
@@ -74,8 +74,16 @@ cd -
 # fi
 
 
-# Download weights:
+# Download weights: We may or may not want to grab some models off the model zoo from
+# here:
+# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
 mkdir -p ../training/weights/pretrained/
 cd ../training/weights/pretrained/
-wget https://download.pytorch.org/models/squeezenet1_1-f364aa15.pth
+if [[ ! -f squeezenet1_1-f364aa15.pth ]]; then
+    wget https://download.pytorch.org/models/squeezenet1_1-f364aa15.pth
+fi
+if [[ ! -f coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip ]]; then
+    wget https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
+fi
+unzip coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d ./coco_ssd_mobilenet_v1_1.0_quant
 cd -
