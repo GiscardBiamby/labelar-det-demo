@@ -50,7 +50,7 @@ dependencies:
   - pyparsing
   - pytest
   - python=3.7.3
-  - pytorch=1.1.0
+  - pytorch=1.2
   - rope
   - scikit-image
   - scikit-learn
@@ -59,9 +59,10 @@ dependencies:
   - setuptools=41.0.1
   - tensorboard=1.13.1
   - tensorboardx=1.7
-  - torchvision=0.3.0
+  - torchvision=0.4.0
   - tqdm
   - yacs
   - yaml
   - pip:
     - tensorflow>=2.0
+    - pytorch2keras

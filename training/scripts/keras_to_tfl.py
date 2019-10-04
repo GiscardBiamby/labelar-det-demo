@@ -14,6 +14,41 @@ import numpy as np
 import tensorflow as tf
 
 
+# converters = {
+#     "keras": tf.lite.TFLiteConverter.from_keras_model
+#     , "tf": from_tf
+# }
+
+# def from_tf(model):
+#     pass
+
+
+# def tf_to_tflite(opt):
+#     weights_path: Path = Path("../weights")
+#     model_path = weights_path / opt.model_path
+#     if not model_path.exists():
+#         raise ValueError(f"Invalid model path: {model_path}")
+
+#     gf = tf.GraphDef()
+#     print(f"loading tf model from path: {model_path}")
+#     m_file = open(model_path, "rb")
+#     gf.ParseFromString(m_file.read())
+
+#     with open("somefile.txt", "a") as the_file:
+#         for n in gf.node:
+#             the_file.write(n.name + "\n")
+
+#     file = open("somefile.txt", "r")
+#     data = file.readlines()
+#     print("output name = ")
+#     print(data[len(data) - 1])
+
+#     print("Input name = ")
+#     file.seek(0)
+#     print(file.readline())
+#     pass
+
+
 def main(opt):
     """
     """
@@ -67,10 +102,17 @@ def main(opt):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--model_path",
+        type=str,
+        default="squeezenet.h5",
+        help="filename of model to convert. Path should be relative to the ./training/models/ folder",
+    )
+    parser.add_argument(
         "--quantize",
         type=str,
         default="fp16",
         help="Type of post-training quantization to use.",
     )
     opt = parser.parse_args()
-    main(opt)
+    # main(opt)
+    tf_to_tflite(opt)

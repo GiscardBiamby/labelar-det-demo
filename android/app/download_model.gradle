@@ -1,6 +1,7 @@
 
 task downloadZipFile(type: Download) {
     src 'http://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip'
+//    src 'http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz'
     dest new File(buildDir, 'zips/')
     overwrite true
 }

@@ -22,7 +22,7 @@ def keras_to_tensorflow(
 ):
     """Convert from keras to tf"""
     if not output_dir.exists():
-        output_dir.mkdir(parents=True, exist_ok = True)
+        output_dir.mkdir(parents=True, exist_ok=True)
     output_dir: str = str(output_dir)
 
     out_nodes = []
@@ -138,9 +138,7 @@ def main(opt):
     keras_model = SqueezeNet()
     keras_model.load_weights(model_path)
     output_file = get_tf_filename(str(model_path))
-    keras_to_tensorflow(
-        keras_model, output_dir=weights_path, model_name=output_file
-    )
+    keras_to_tensorflow(keras_model, output_dir=weights_path, model_name=output_file)
     print("MODEL SAVED")
 
 
