@@ -63,7 +63,7 @@ def do_train(cfg, model,
     if args.use_tensorboard and save_to_disk:
         import tensorboardX
 
-        summary_writer = tensorboardX.SummaryWriter(log_dir=os.path.join(cfg.OUTPUT_DIR, 'tf_logs'))
+        summary_writer = tensorboardX.SummaryWriter(logdir=os.path.join(cfg.OUTPUT_DIR, 'tf_logs'))
     else:
         summary_writer = None
 

@@ -52,6 +52,14 @@ class DatasetCatalog:
             "data_dir": "val2014",
             "ann_file": "annotations/instances_val2014.json"
         },
+        'uistdemo_train': {
+            "data_dir": "images/demo-mugs_train",
+            "ann_file": "annotations/instances_demo-mugs_train.json"
+        },
+        'uistdemo_val': {
+            "data_dir": "images/demo-mugs_val",
+            "ann_file": "annotations/instances_demo-mugs_val.json"
+        },
     }
 
     @staticmethod
@@ -78,5 +86,13 @@ class DatasetCatalog:
                 ann_file=os.path.join(coco_root, attrs["ann_file"]),
             )
             return dict(factory="COCODataset", args=args)
+        elif "uist" in name:
+            uist_root = DatasetCatalog.DATA_DIR
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                data_dir=os.path.join(uist_root, attrs["data_dir"]),
+                ann_file=os.path.join(uist_root, attrs["ann_file"]),
+            )
+            return dict(factory="UISTDemoDataset", args=args)
 
         raise RuntimeError("Dataset not available: {}".format(name))
