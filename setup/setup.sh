@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. utils.sh
 
 function program_exists() {
     command -v "$1" >/dev/null 2>&1
@@ -28,9 +28,9 @@ function get_platform() {
 function check_conda_env_exists() {
     source activate labelar_demo
     if [ $? -eq 0 ]; then
-        echo "EXISTS"
+        echo "labelar_demo conda env EXISTS"
     else
-        echo "DOES NOT EXIST"
+        echo "labelar_demo conda env DOES NOT EXIST!!"
     fi
 }
 
@@ -46,7 +46,7 @@ platform="cpu"
 get_platform $platform
 
 # Delete and recreate conda env:
-REBUILD_ENV=true
+REBUILD_ENV=false
 if [[ "$REBUILD_ENV" = true ]]; then
     echo "(Re)-building labelar_demo conda env ${REBUILD_ENV}"
     conda deactivate
@@ -59,8 +59,8 @@ if [[ "$REBUILD_ENV" = true ]]; then
     fi
 fi
 
-
-# Enable using the h4d_env conda environment from jupyter notebooks:
+##
+## Enable using the h4d_env conda environment from jupyter notebooks:
 conda activate labelar_demo
 python -m ipykernel install --user --name labelar_demo --display-name "labelar_demo"
 # Install pycocotools:
@@ -68,15 +68,25 @@ cd ../vendor/cocoapi/PythonAPI
 python3 setup.py build_ext install
 cd -
 
+##
+## Setup SSD:
+echo "${platform}"
+if [[ "${platform}" == "gpu" ]]; then
+    echo "Performing step(s) that require GPU"
+    echo "============================================="
+    echo "Installing SSD..."
+    # Do GPU specific setup here, e.g., CenterNet, DeformConvVxx, any compilation steps that require CUDA,etc
+    cd ../training/ssd-det/ext
+    selcompiler
+    cd -
+else
+    echo "Skipping step(s) that require GPU"
+fi
 
-# if [[ "${platform}" == "gpu" ]]; then
-#     # Do GPU specific setup here, e.g., CenterNet, DeformConvVxx.
-# fi
-
-
-# Download weights: We may or may not want to grab some models off the model zoo from
-# here:
-# https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
+##
+## Download weights: We may or may not want to grab some models off the model zoo from
+## here:
+## https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md
 mkdir -p ../training/weights/pretrained/
 cd ../training/weights/pretrained/
 if [[ ! -f squeezenet1_1-f364aa15.pth ]]; then
@@ -85,5 +95,5 @@ fi
 if [[ ! -f coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip ]]; then
     wget https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
 fi
-unzip coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d ./coco_ssd_mobilenet_v1_1.0_quant
+unzip -f coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d ./coco_ssd_mobilenet_v1_1.0_quant
 cd -

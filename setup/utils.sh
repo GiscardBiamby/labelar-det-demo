@@ -6,6 +6,14 @@ function abs_path {
 	echo "$loc"
 }
 
+function selcompiler() {
+	if [[ "${OS}" == "Linux" ]]; then
+		python build.py build_ext develop
+	else
+		CFLAGS='-stdlib=libc++' python build.py build_ext develop
+	fi
+}
+
 answer_is_yes() {
     [[ "$REPLY" =~ ^[Yy]$ ]] \
         && return 0 \
