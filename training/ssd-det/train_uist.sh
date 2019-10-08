@@ -9,7 +9,7 @@ DATASET_SIZE=648
 # batch sizes: SSD300: { TitanXp: 48, RTX: 96 }, SSD512 { TitanXp: 20, }
 BATCH_SIZE=96
 ITERS_PER_EPOCH=$((DATASET_SIZE/$BATCH_SIZE))
-EPOCHS=1000
+EPOCHS=2000
 # MAX_ITER is what ssd-master uses to know how many training iterations to run.
 # If resuming from previous training,t he iteration number picks up from where
 # the previous training left off, so you'll want to hand-pick this value accordingly:
