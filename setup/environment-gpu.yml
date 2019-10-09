@@ -68,5 +68,4 @@ dependencies:
   - yaml
   - pip:
     - tensorflow-gpu==1.14.0
-    - tensorflow==1.14.0
-    - pytorch2keras
+    - gast==0.2.2

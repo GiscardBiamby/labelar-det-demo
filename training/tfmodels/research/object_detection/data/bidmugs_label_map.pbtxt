@@ -1,0 +1,25 @@
+item {
+  name: "mug-blu-s"
+  id: 1
+  display_name: "mug-blu-s"
+}
+item {
+  name: "mug-blu-t"
+  id: 2
+  display_name: "mug-blu-t"
+}
+item {
+  name: "mug-red"
+  id: 3
+  name: "mug-red"
+}
+item {
+  name: "mug-wht-s"
+  id: 4
+  name: "mug-wht-s"
+}
+item {
+  name: "mug-wht-t"
+  id: 5
+  name: "mug-wht-t"
+}
