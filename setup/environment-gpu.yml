@@ -8,6 +8,7 @@ dependencies:
   - autopep8
   - black
   - blas
+  - contextlib2
   - cudatoolkit=10.0.130
   - cython
   - easydict=1.9
@@ -26,6 +27,7 @@ dependencies:
   - jupyterlab
   - jupyterlab_server
   - keras
+  - lxml
   - matplotlib
   - matplotlib-base
   - mkl
@@ -65,6 +67,6 @@ dependencies:
   - yacs
   - yaml
   - pip:
-    - tensorflow-gpu>=2.0
+    - tensorflow-gpu==1.14.0
+    - tensorflow==1.14.0
     - pytorch2keras
-

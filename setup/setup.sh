@@ -84,6 +84,17 @@ else
     echo "Skipping step(s) that require GPU"
 fi
 
+##
+## Setup tensorflow object-detection:
+echo "============================================="
+echo "Installing tensorflow object detection dependencies..."
+cd ../training/tfmodels/research/
+protoc object_detection/protos/*.proto --python_out=.
+echo "Verifying tensorflow object detection installation..."
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+python object_detection/builders/model_builder_test.py
+cd -
+
 
 ##
 ## Download weights: We may or may not want to grab some models off the model zoo from

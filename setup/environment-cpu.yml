@@ -64,5 +64,5 @@ dependencies:
   - yacs
   - yaml
   - pip:
-    - tensorflow>=2.0
+    - tensorflow=1.15
     - pytorch2keras

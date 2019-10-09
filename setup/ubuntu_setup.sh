@@ -4,6 +4,11 @@
 sudo apt-get install zip
 
 ###
+### protocol-buffers compiler, used by tensorflow object detection (e.g., ./training/tfmodels/)
+sudo apt-get install protobuf-compiler
+# See here if you have trouble with it, or for instructions to install on macOS: https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
+
+###
 ### Android setup
 # You only have to care about this section if you want to deploy to android from your
 # computer:
