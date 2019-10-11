@@ -12,3 +12,7 @@
 /.gradle/
 /.idea/
 app/src/main/assets/detect.tflite
+
+!env/
+!ENV/
+!**/env/
