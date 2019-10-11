@@ -6,4 +6,4 @@ python object_detection/dataset_tools/create_bidmugs_tf_record.py \
     --train_image_dir=../../data/"${UIST_DATA_NAME}"/images/demo-mugs_train/ \
     --val_image_dir=../../data/"${UIST_DATA_NAME}"/images/demo-mugs_val/ \
     --train_annotations_file=../../data/"${UIST_DATA_NAME}"/annotations/instances_demo-mugs_train.json \
-     --val_annotations_file=../../data/"${UIST_DATA_NAME}"/annotations/instances_demo-mugs_val.json
+    --val_annotations_file=../../data/"${UIST_DATA_NAME}"/annotations/instances_demo-mugs_val.json

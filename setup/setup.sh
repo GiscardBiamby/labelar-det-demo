@@ -95,6 +95,10 @@ export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 python object_detection/builders/model_builder_test.py
 cd -
 
+# cd ../training/
+# git clone --recurse-submodules https://github.com/tensorflow/tensorflow
+# cd -
+
 
 ##
 ## Download weights: We may or may not want to grab some models off the model zoo from

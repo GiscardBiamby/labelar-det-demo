@@ -11,3 +11,7 @@ conda activate labelar_demo
 echo "Appending tfmodels paths to PYTHONPATH..."
 cd ./training/tfmodels/research/
 export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+
+# # Bazel:
+# echo "Adding '${HOME}/bin' to PATH (for Bazel)..."
+# export PATH="$PATH:$HOME/bin"
