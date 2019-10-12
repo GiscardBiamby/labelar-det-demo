@@ -106,6 +106,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     final TFLiteObjectDetectionAPIModel d = new TFLiteObjectDetectionAPIModel();
 
     InputStream labelsInput = null;
+    LOGGER.w("LabelFileName: " + labelFilename);
     String actualFilename = labelFilename.split("file:///android_asset/")[1];
     labelsInput = assetManager.open(actualFilename);
     BufferedReader br = null;
@@ -153,9 +154,12 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     Trace.beginSection("preprocessBitmap");
     // Preprocess the image data from 0-255 int to normalized float based
     // on the provided parameters.
+    LOGGER.i("getPixels");
     bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
 
+    LOGGER.i("rewind");
     imgData.rewind();
+    LOGGER.i("Loop");
     for (int i = 0; i < inputSize; ++i) {
       for (int j = 0; j < inputSize; ++j) {
         int pixelValue = intValues[i * inputSize + j];
@@ -171,15 +175,18 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
         }
       }
     }
+    LOGGER.i("DoneLoop");
     Trace.endSection(); // preprocessBitmap
 
     // Copy the input data into TensorFlow.
     Trace.beginSection("feed");
+    LOGGER.i("CopyInputToTf");
     outputLocations = new float[1][NUM_DETECTIONS][4];
     outputClasses = new float[1][NUM_DETECTIONS];
     outputScores = new float[1][NUM_DETECTIONS];
     numDetections = new float[1];
 
+    LOGGER.i("OutputMap");
     Object[] inputArray = {imgData};
     Map<Integer, Object> outputMap = new HashMap<>();
     outputMap.put(0, outputLocations);
@@ -190,12 +197,15 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     // Run the inference call.
     Trace.beginSection("run");
+    LOGGER.i("runForMultipleInputsOutputs Start");
     tfLite.runForMultipleInputsOutputs(inputArray, outputMap);
+    LOGGER.i("runForMultipleInputsOutputs End");
     Trace.endSection();
 
     // Show the best detections.
     // after scaling them back to the input size.
     final ArrayList<Recognition> recognitions = new ArrayList<>(NUM_DETECTIONS);
+    LOGGER.i("ShowBestDetsLoop Start...");
     for (int i = 0; i < NUM_DETECTIONS; ++i) {
       final RectF detection =
           new RectF(
@@ -214,6 +224,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
               outputScores[0][i],
               detection));
     }
+    LOGGER.i("ShowBestDetsLoop End...");
     Trace.endSection(); // "recognizeImage"
     return recognitions;
   }

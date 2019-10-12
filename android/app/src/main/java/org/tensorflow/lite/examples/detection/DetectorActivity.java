@@ -42,6 +42,7 @@ import org.tensorflow.lite.examples.detection.tflite.Classifier;
 import org.tensorflow.lite.examples.detection.tflite.TFLiteObjectDetectionAPIModel;
 import org.tensorflow.lite.examples.detection.tracking.MultiBoxTracker;
 
+
 /**
  * An activity that uses a TensorFlowMultiBoxDetector and ObjectTracker to detect and then track
  * objects.
@@ -50,10 +51,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
-  private static final int TF_OD_API_INPUT_SIZE = 300;
-  private static final boolean TF_OD_API_IS_QUANTIZED = true;
-  private static final String TF_OD_API_MODEL_FILE = "detect.tflite";
-  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/labelmap.txt";
+  private static String TF_MODEL_TYPE = "mobilenetv2_bidmugs";
+  private static final int TF_OD_API_INPUT_SIZE = 320;
+  private static final boolean TF_OD_API_IS_QUANTIZED = false;
+//  private static String TF_MODEL_TYPE = "default";
+  private static final String TF_OD_API_MODEL_FILE = TF_MODEL_TYPE + "/detect.tflite";
+  private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/" + TF_MODEL_TYPE + "/labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
   // Minimum detection confidence to track a detection.
   private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
@@ -178,7 +181,9 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
           public void run() {
             LOGGER.i("Running detection on image " + currTimestamp);
             final long startTime = SystemClock.uptimeMillis();
+            LOGGER.i("Starting recognizeImage()... ");
             final List<Classifier.Recognition> results = detector.recognizeImage(croppedBitmap);
+            LOGGER.i("Finished recognizeImage(), " + results.size());
             lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
 
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);

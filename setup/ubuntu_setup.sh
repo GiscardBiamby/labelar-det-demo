@@ -23,7 +23,7 @@ sudo apt-get install protobuf-compiler
 sudo apt-get install adb
 
 ## Ensure NDK is installed:
-## OPen the android project in android studio, goto File->Project Structure->Download NDK
+## Open the android project in android studio, goto File->Project Structure->Download NDK
 
 
 

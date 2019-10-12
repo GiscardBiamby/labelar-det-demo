@@ -10,9 +10,9 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/labelar_det"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher"
+        android:roundIcon="@drawable/labelar_det"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
