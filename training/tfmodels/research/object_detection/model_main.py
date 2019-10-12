@@ -17,7 +17,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
-
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"]="3"
 from absl import flags
 
 import tensorflow as tf
@@ -53,13 +54,25 @@ flags.DEFINE_boolean(
     'run_once', False, 'If running in eval-only mode, whether to run just '
     'one round of eval vs running continuously (default).'
 )
+flags.DEFINE_integer(
+    "save_checkpoints_steps", 500, "Save checkpoints every"
+)
+flags.DEFINE_integer(
+    "eval_throttle_secs", 600, """Do not re-evaluate unless the last evaluation was
+        started at least this many seconds ago. Of course, evaluation does not
+        occur if no new checkpoints are available, hence, this is the minimum."""
+)
 FLAGS = flags.FLAGS
 
 
 def main(unused_argv):
   flags.mark_flag_as_required('model_dir')
   flags.mark_flag_as_required('pipeline_config_path')
-  config = tf.estimator.RunConfig(model_dir=FLAGS.model_dir)
+  config = tf.estimator.RunConfig(
+      model_dir=FLAGS.model_dir
+      , save_checkpoints_secs=None
+      , save_checkpoints_steps=FLAGS.save_checkpoints_steps
+  )
 
   train_and_eval_dict = model_lib.create_estimator_and_inputs(
       run_config=config,
@@ -99,7 +112,8 @@ def main(unused_argv):
         eval_on_train_input_fn,
         predict_input_fn,
         train_steps,
-        eval_on_train_data=False)
+        eval_on_train_data=False,
+        eval_throttle_secs=FLAGS.eval_throttle_secs)
 
     # Currently only a single Eval Spec is allowed.
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_specs[0])

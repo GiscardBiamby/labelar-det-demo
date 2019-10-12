@@ -704,7 +704,8 @@ def create_train_and_eval_specs(train_input_fn,
                                 train_steps,
                                 eval_on_train_data=False,
                                 final_exporter_name='Servo',
-                                eval_spec_names=None):
+                                eval_spec_names=None,
+                                eval_throttle_secs=600):
   """Creates a `TrainSpec` and `EvalSpec`s.
 
   Args:
@@ -747,12 +748,13 @@ def create_train_and_eval_specs(train_input_fn,
             name=eval_spec_name,
             input_fn=eval_input_fn,
             steps=None,
-            exporters=exporter))
+            exporters=exporter,
+            throttle_secs=eval_throttle_secs))
 
   if eval_on_train_data:
     eval_specs.append(
         tf.estimator.EvalSpec(
-            name='eval_on_train', input_fn=eval_on_train_input_fn, steps=None))
+            name='eval_on_train', input_fn=eval_on_train_input_fn, steps=None, throttle_secs=eval_throttle_secs))
 
   return train_spec, eval_specs
 
