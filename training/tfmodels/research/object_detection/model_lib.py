@@ -781,8 +781,19 @@ def continuous_eval(estimator, model_dir, input_fn, train_steps, name):
 
     tf.logging.info('Starting Evaluation.')
     try:
-      eval_results = estimator.evaluate(
+      eval_results_raw = estimator.evaluate(
           input_fn=input_fn, steps=None, checkpoint_path=ckpt, name=name)
+      eval_results = {}
+      for k,v in eval_results.items():
+          k: str = k
+          if not (
+              k.startswith("Detections")
+              and "Groundtruth" in k
+          ):
+            print(f"ADDING key to eval_results 'k': '{v}'")
+            eval_results[k] = v
+          else:
+            print(f"NOT ADDING key to eval_results 'k': '{v}'")
       tf.logging.info('Eval results: %s' % eval_results)
 
       # Terminate eval job when final checkpoint is reached

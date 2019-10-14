@@ -2,21 +2,16 @@
 
 Setups up conda environment and downloads pretrained weights, etc:
 
-```bash
+``` bash
 PROJ_ROOT=path/to/this/github/repo
 cd "${PROJ_ROOT}"/setup
 ./setup.sh
 ```
 
-# Weight conversion:
+# Training
+See [./training/README.md](./training/README.md) for training instructions.
 
-Right now all we have is a convert.py script that converts squeezenet from pytorch to keras format. But we're building on top of this with the goal to soon be able to convert multiple pytorch models into the right format(s) and deploy them to android/iOS.
+We have two models and best so far is ssd_mobilenet_v2_quant_bidmugs: mAP50=0.670, runs at ~35fps on the Google PX3L.
 
-Android:
-(./training/scripts/pytorch_to_keras.py)
-pytorch -> keras -> tensorflow lite
+Also have trained and run a bidmugs model on mobilenet_v1_quant_bidmugs. AP was low because that test was just to see if the pipeline was working.
 
-iOS:
-pytorch -> keras -> CoreML
-
-We'll want to try also running SSD/MobileNet, and maybe CenterNet. Centernet would be interesting if it can work on mobile because the paper's main claim to fame is a better tradeoff in terms of FPS vs. detection performance compared to pretty much all existing single and two stage detectors (Faster-RCNN, YOLO, SSD, etc). But the question is does CenterNet require any operations that tensorflow lite cannot yet accelerate on mobile? And how much work to define a keras model for Centernet? etc.
