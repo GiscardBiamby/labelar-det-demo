@@ -26,7 +26,6 @@ dependencies:
   - jupyter_core
   - jupyterlab
   - jupyterlab_server
-  - keras
   - lxml
   - matplotlib
   - matplotlib-base

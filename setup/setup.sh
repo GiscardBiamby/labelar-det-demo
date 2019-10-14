@@ -33,6 +33,7 @@ function check_conda_env_exists() {
 }
 
 # Need this on some systems to enable conda from bash:
+CONDA_ENV="labelar_demo"
 eval "$(conda shell.bash hook)"
 check_conda_env_exists "labelar_demo"
 echo "labelar_demo conda env EXISTS?: ${ENV_EXISTS}"
@@ -47,10 +48,10 @@ get_platform $platform
 # Delete and recreate conda env:
 REBUILD_ENV=true
 if [[ "$REBUILD_ENV" = true ]]; then
-    echo "(Re)-building labelar_demo conda env ${REBUILD_ENV}"
+    echo "(Re)-building ${CONDA_ENV} conda env ${REBUILD_ENV}"
     conda deactivate
     if [[ $ENV_EXISTS = true ]]; then
-        conda env remove -n labelar_demo
+        conda env remove -n "${CONDA_ENV}"
     fi
     conda env create -f environment-$platform.yml
     if [[ "${platform}" == "cpu" ]]; then
@@ -62,8 +63,8 @@ fi
 
 ##
 ## Enable using the h4d_env conda environment from jupyter notebooks:
-conda activate labelar_demo
-python -m ipykernel install --user --name labelar_demo --display-name "labelar_demo"
+conda activate "${CONDA_ENV}"
+python -m ipykernel install --user --name "${CONDA_ENV}" --display-name "${CONDA_ENV}"
 # Install pycocotools:
 cd ../vendor/cocoapi/PythonAPI
 python3 setup.py build_ext install
@@ -94,6 +95,51 @@ echo "Verifying tensorflow object detection installation..."
 export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 python object_detection/builders/model_builder_test.py
 cd -
+
+
+
+
+CONDA_ENV="labelar_demo_tf2"
+# Delete and recreate conda env:
+REBUILD_ENV=true
+if [[ "$REBUILD_ENV" = true ]]; then
+    echo "(Re)-building ${CONDA_ENV} conda env ${REBUILD_ENV}"
+    conda deactivate
+    if [[ $ENV_EXISTS = true ]]; then
+        conda env remove -n "${CONDA_ENV}"
+    fi
+    conda env create -f environment-tf2-$platform.yml
+    if [[ "${platform}" == "cpu" ]]; then
+        if [[ -f environment-tf2-cpu.yml.bak ]]; then
+            mv environment-tf2-cpu.yml.bak environment-cpu.yml
+        fi
+    fi
+fi
+
+##
+## Enable using the h4d_env conda environment from jupyter notebooks:
+conda activate "${CONDA_ENV}"
+python -m ipykernel install --user --name "${CONDA_ENV}" --display-name "${CONDA_ENV}"
+# Install pycocotools:
+cd ../vendor/cocoapi/PythonAPI
+python3 setup.py build_ext install
+cd -
+
+##
+## Setup SSD:
+echo "${platform}"
+if [[ "${platform}" == "gpu" ]]; then
+    echo "Performing step(s) that require GPU"
+    echo "============================================="
+    echo "Installing SSD dependencies..."
+    # Do GPU specific setup here, e.g., CenterNet, DeformConvVxx, any compilation steps that require CUDA,etc
+    cd ../training/ssd-det/ext
+    selcompiler
+    cd -
+else
+    echo "Skipping step(s) that require GPU"
+fi
+
 
 # cd ../training/
 # git clone --recurse-submodules https://github.com/tensorflow/tensorflow

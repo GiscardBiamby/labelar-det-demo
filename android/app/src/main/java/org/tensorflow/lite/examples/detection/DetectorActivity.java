@@ -51,10 +51,13 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
   private static final Logger LOGGER = new Logger();
 
   // Configuration values for the prepackaged SSD model.
-  private static String TF_MODEL_TYPE = "mobilenet_v2_bidmugs";
-  private static final int TF_OD_API_INPUT_SIZE = 320;
-  private static final boolean TF_OD_API_IS_QUANTIZED = false;
 //  private static String TF_MODEL_TYPE = "default";
+  private static String TF_MODEL_TYPE = "mobilenet_v1_bidmugs";
+//  private static String TF_MODEL_TYPE = "mobilenet_v2_bidmugs";
+//  private static String TF_MODEL_TYPE = "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29";
+//  private static String TF_MODEL_TYPE = "bidmugs";
+  private static final int TF_OD_API_INPUT_SIZE = 300;
+  private static final boolean TF_OD_API_IS_QUANTIZED = true;
   private static final String TF_OD_API_MODEL_FILE = TF_MODEL_TYPE + "/detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/" + TF_MODEL_TYPE + "/labelmap.txt";
   private static final DetectorMode MODE = DetectorMode.TF_OD_API;
