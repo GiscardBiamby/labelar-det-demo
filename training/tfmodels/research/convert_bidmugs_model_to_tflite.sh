@@ -11,10 +11,10 @@ start_task() {
     print_in_green "[!] $1\n"
 }
 
-export MODEL_NAME="mobilenet_v1_bidmugs"
+export MODEL_NAME="mobilenet_v2_bidmugs"
 export INPUT_SIZE=300
 export PIPELINE_CONFIG_PATH=./object_detection/samples/configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=10000
+export NUM_TRAIN_STEPS=200
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export CHECKPOINT_PATH=../../weights/"ssd_${MODEL_NAME}/model.ckpt-${NUM_TRAIN_STEPS}"
@@ -45,13 +45,13 @@ fi
 
 ##
 ## Eval model:
-start_task "Evaluating model: ${MODEL_NAME}..."
-python object_detection/model_main.py \
-    --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
-    --checkpoint_dir="${CHECKPOINT_PATH}" \
-    --run_once \
-    --sample_1_of_n_eval_examples=1 \
-    --alsologtostderr
+# start_task "Evaluating model: ${MODEL_NAME}..."
+# python object_detection/model_main.py \
+#     --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
+#     --checkpoint_dir="${CHECKPOINT_PATH}" \
+#     --run_once \
+#     --sample_1_of_n_eval_examples=1 \
+#     --alsologtostderr
 
 if [[ ! -d "${OUTPUT_DIR}" ]]; then
     echo "Creating directory: '${OUTPUT_DIR}''"

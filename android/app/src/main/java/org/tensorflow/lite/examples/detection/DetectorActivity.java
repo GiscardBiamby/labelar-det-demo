@@ -52,8 +52,8 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 
   // Configuration values for the prepackaged SSD model.
 //  private static String TF_MODEL_TYPE = "default";
-  private static String TF_MODEL_TYPE = "mobilenet_v1_bidmugs";
-//  private static String TF_MODEL_TYPE = "mobilenet_v2_bidmugs";
+//  private static String TF_MODEL_TYPE = "mobilenet_v1_bidmugs";
+  private static String TF_MODEL_TYPE = "mobilenet_v2_bidmugs";
 //  private static String TF_MODEL_TYPE = "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29";
 //  private static String TF_MODEL_TYPE = "bidmugs";
   private static final int TF_OD_API_INPUT_SIZE = 300;
