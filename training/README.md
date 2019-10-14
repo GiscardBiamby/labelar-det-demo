@@ -2,7 +2,7 @@
 
 ## Setup
 
-Make sure you've run <labelar-det-demo-root>/setup/setup.sh
+Make sure you've run [../setup/setup.sh](../setup/setup.sh)
 
 ## Run Training
 
