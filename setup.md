@@ -3,7 +3,7 @@
 Setups up conda environment and downloads pretrained weights, etc:
 
 ``` bash
-PROJ_ROOT=path/to/this/github/repo
+export PROJ_ROOT=path/to/this/github/repo
 cd "${PROJ_ROOT}"/setup
 ./setup.sh
 ```

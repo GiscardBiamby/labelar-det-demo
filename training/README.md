@@ -2,7 +2,7 @@
 
 ## Setup
 
-Make sure you've run [../setup/setup.sh](../setup/setup.sh)
+Make sure you've run [../setup/setup.sh](../setup/setup.sh), see [../README.md](../README.md)
 
 ## Run Training
 
@@ -13,14 +13,15 @@ export TRAIN_DIR="${LABELAR_DEMO_ROOT}/training/tfmodels/research"
 source ./init_env.sh
 
 cd "${TRAIN_DIR}"
+
 # Convert dataset to .tfrecord format:
 # NOTE!: This script is hardcoded to convert the "bidmugs" dataset. You'll
 #   need to copy-n-modify the following files to handle a different dataset:
 #       1. $"{TRAIN_DIR}"/object_detection/dataset_tools/create_bidmugs_tf_record.py
 #       2. $"{TRAIN_DIR}"/create_bidmugs_tfrecords.sh
 ./create_bidmugs_tfrecords.sh
+
 # Train:
-cd "${LABELAR_DEMO_ROOT}/training/tfmodels/research"
 ./train_mobile_model.sh 2>&1 | tee train_mobile_model.log
 ```
 
@@ -39,6 +40,7 @@ cd "${LABELAR_DEMO_ROOT}/training/tfmodels/research"
 - [ ] Create json to manage models on mobile device. Store model metadata, model paths
 - [ ] Allow android app to switch between models
 ## Maybe TODO:
+- [ ] Try out some slower but more accurate models (higher resolution, FPN, PPN, etc.)
 - [ ] Add android build to pipeline
 - [ ] Add pipeline step to deploy to android if connected via usb
 - [X] Test NNAPI (Nice, inference time went from ~48ms to ~25-28ms)
