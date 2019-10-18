@@ -5,6 +5,7 @@ import glob
 import json
 import os
 from pathlib import Path
+import shutil
 from typing import Dict, List, Tuple
 
 # 3rd Party imports:
@@ -32,7 +33,9 @@ class LabelARToCOCO(object):
         self.fix_and_remap_cats()
         misspelled = self.get_mispelling_map()
         new_cats = self.get_new_cats(misspelled)
-        self.get_old_to_new_cat_mapping(misspelled, new_cats)
+        old_to_new_cats = self.get_old_to_new_cat_mapping(misspelled, new_cats)
+        if not opt.dry_run:
+            self.generate_merged_dataset(new_cats, old_to_new_cats)
 
     def fix_and_remap_cats(self):
         self.print_current_cats()
@@ -41,6 +44,7 @@ class LabelARToCOCO(object):
         print("\nCategories from individual collects (before remapping):")
         for i, cid in enumerate(self.collect_ids):
             src_folder = self.collect_path / cid
+            print(f"cid: {cid}, Src folder: {src_folder}")
             json_files = list(src_folder.glob("*.json"))
             with open(os.devnull, "w") as f, redirect_stdout(f):  # suppress output
                 coco_misp = COCO(json_files[0])
@@ -49,21 +53,31 @@ class LabelARToCOCO(object):
     def get_mispelling_map(self):
         # hardcode while i get the script up and running, but later pull this from a
         # json file whose name matches opt.ds_name, located in dir: opt.collects_path
-        misspelled = {
-            "FPLM": {"mug-blue-s": "mug-blu-s"},
-            "SWKW": {},
-            "3RPC": {
-                "0": "mug-wht-s",
-                "1": "mug-blu-t",
-                "2": "mug-wht-t",
-                "3": "mug-blu-s",
-                "4": "mug-red",
-            },
-            "VHR7": {},
-            "1DKT": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
-            "LYVP": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
-            "KS9A": {},
-        }
+        # misspelled = {
+        #     "FPLM": {"mug-blue-s": "mug-blu-s"},
+        #     "SWKW": {},
+        #     "3RPC": {
+        #         "0": "mug-wht-s",
+        #         "1": "mug-blu-t",
+        #         "2": "mug-wht-t",
+        #         "3": "mug-blu-s",
+        #         "4": "mug-red",
+        #     },
+        #     "VHR7": {},
+        #     "1DKT": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
+        #     "LYVP": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
+        #     "KS9A": {},
+        # }
+        label_remap_path: Path = opt.collect_path / "labelremap.json"
+        assert (
+            label_remap_path.exists()
+        ), f"Label remap file not found: {label_remap_path}"
+        assert (
+            label_remap_path.is_file()
+        ), f"Label remap path is not a file: {label_remap_path}"
+        with open(label_remap_path, "r") as JSON:
+            misspelled = json.load(JSON)
+
         print("\nUsing misspelling remaps: ", misspelled)
         return misspelled
 
@@ -82,11 +96,7 @@ class LabelARToCOCO(object):
                 coco = COCO(json_files[0])
             cats = coco.dataset["categories"]
             for c in cats:
-                corrected_name = corrected_name = (
-                    misspelled[cid][c["name"]]
-                    if (cid in misspelled and c["name"] in misspelled[cid])
-                    else c["name"]
-                )
+                corrected_name = self.remap_cat(cid, c, misspelled)
                 #         print(cid, c, corrected_name)
                 cats_merged.add(corrected_name)
 
@@ -96,6 +106,16 @@ class LabelARToCOCO(object):
             new_cats[c] = {"supercategory": "", "id": i, "name": c}
         print("new_cats (merged): ", new_cats)
         return new_cats
+
+    def remap_cat(self, cid, cat, misspelled):
+        corrected_name = (
+            misspelled[cid][cat["name"]]
+            if (cid in misspelled and c["name"] in misspelled[cid])
+            else cat["name"]
+        )
+        if "all" in misspelled and cat["name"] in misspelled["all"]:
+            corrected_name = misspelled["all"][c["name"]]
+        return corrected_name
 
     def get_old_to_new_cat_mapping(self, misspelled, new_cats):
         """
@@ -114,11 +134,7 @@ class LabelARToCOCO(object):
                 coco = COCO(json_files[0])
             cats = coco.dataset["categories"]
             for c in cats:
-                corrected_name = corrected_name = (
-                    misspelled[cid][c["name"]]
-                    if (cid in misspelled and c["name"] in misspelled[cid])
-                    else c["name"]
-                )
+                corrected_name = self.remap_cat(cid, c, misspelled)
                 # If new cat name already registered, use the id already assigned to that cat name:
                 assert (
                     corrected_name in new_cats
@@ -142,6 +158,99 @@ class LabelARToCOCO(object):
         print("\nOLD TO NEW cat mappings:")
         for k, v in old_to_new_cats.items():
             print(k, v)
+
+        return old_to_new_cats
+
+    def generate_merged_dataset(self, new_cats, old_to_new_cats):
+        ann_counter = 0
+        old_to_new_imgs = {}
+        master_imgs, master_anns = [], []
+
+        newImgFolder = self.output_dir / f"images/{opt.ds_name}_{opt.split}"
+        print("newimgfolder: ", newImgFolder)
+
+        # New image directory
+        if not os.path.exists(newImgFolder):
+            os.makedirs(newImgFolder)
+
+        # for each collect
+        for i, cid in enumerate(self.collect_ids):
+            src_folder = self.collect_path / cid
+            json_files = list(src_folder.glob("*.json"))
+
+            # for each json file in the folder
+            for json_file in json_files:
+                print("JSON_FILE: ", json_file)
+                # load data as a COCO object
+                with open(os.devnull, "w") as f, redirect_stdout(f):
+                    coco = COCO(json_file)
+
+                # APPEND IMAGES TO MASTER LIST
+                # -  -  -  -  -  -  -  -  -  -  -  -
+                img = coco.loadImgs(ids=coco.getImgIds())[0]
+                new_img = img.copy()
+                new_img["id"] = len(master_imgs)
+                new_img["collection_id"] = cid
+                new_img["old_file_name"] = str(img["id"]).zfill(12) + ".png"
+                new_img["file_name"] = str(new_img["id"]).zfill(12) + ".png"
+                new_img["old_id"] = img["id"]
+                old_to_new_imgs[img["id"]] = new_img["id"]
+                master_imgs.append(new_img)
+
+                I = Image.open(os.path.join(src_folder, img["file_name"]))
+                npim = np.array(I)
+                # If png has 4 channels, save only 3
+                src = os.path.join(src_folder, img["file_name"])
+                dst = os.path.join(newImgFolder, str(new_img["id"]).zfill(12) + ".png")
+                if npim.shape[2] == 4:
+                    img_3chan = Image.fromarray(npim[..., :3])
+                    portrait = False
+                    if portrait:
+                        img_rot = img_3chan.rotate(270)  # if in portrait mode
+                        img_rot.save(dst)
+                    else:
+                        img_3chan.save(dst)
+                    print("Saved image: {}".format(dst))
+                else:
+                    shutil.copy(src, dst)
+
+                # APPEND ANNOTATIONS TO MASTER LIST
+                # -  -  -  -  -  -  -  -  -  -  -  -
+
+                # get the category dictionary for this collect
+                anns = coco.loadAnns(coco.getAnnIds())
+                for ann in anns:
+                    new_ann = ann.copy()
+                    # quick formatting mods
+                    new_ann["segmentation"] = [ann["segmentation"][0]["points"]]
+                    new_ann["bbox"] = ann["box"]
+                    # update to keep category-id consistent across multiple collects
+                    new_ann["category_id"] = old_to_new_cats[(cid, ann["category_id"])][
+                        "id"
+                    ]
+                    new_ann["id"] = ann_counter
+                    new_ann["image_id"] = old_to_new_imgs[ann["image_id"]]
+                    ann_counter += 1
+                    master_anns.append(new_ann)
+
+        new_instances = {
+            "images": master_imgs,
+            "annotations": master_anns,
+            "categories": list(new_cats.values()),
+        }
+
+        # Check 'annotations' directory
+        annotations_folder = opt.output_dir / "annotations"
+        if not os.path.exists(annotations_folder):
+            os.makedirs(annotations_folder)
+
+        newAnnFile = annotations_folder / f"instances_{opt.ds_name}_{opt.split}.json"
+        print("new Ann file: ", newAnnFile)
+
+        with open(newAnnFile, "w") as outfile:
+            json.dump(new_instances, outfile)
+
+        print("New instance annotations save as {}".format(newAnnFile))
 
 
 def main(opt):
@@ -181,6 +290,7 @@ class opts(object):
             default=ROOT_DIR / "training/data",
             help="Path to directory where the final COCO formatted dataset will be saved. The final dataset will be created in a subdirectory of this path, where the subdir name is the name of the created dataset.",
         )
+        self.parser.add_argument("--dry_run", action="store_true")
 
     def parse(self, args=""):
         """
@@ -201,13 +311,23 @@ class opts(object):
 
         # Output path:
         assert opt.output_dir.exists(), f"output_dir '{opt.output_dir}' does not exist"
-        opt.output_dir = opt.output_dir / f"{opt.ds_name}-{opt.split}"
+        opt.output_dir: Path = opt.output_dir / f"{opt.ds_name}-{opt.split}"
+        opt.delete_existing = True
+        output_dir: Path = opt.output_dir
+        if opt.delete_existing:
+            if opt.output_dir.exists():
+                print(f"Deleting output_dir: '{opt.output_dir}'")
+                shutil.rmtree(opt.output_dir)
+        print(f"Creating output_dir: '{opt.output_dir}'")
+        output_dir.mkdir()
 
         # Collect_id's:
         print(type(opt.collect_ids))
         if isinstance(opt.collect_ids, str) and opt.collect_ids.lower() == "all":
             opt.collect_ids = list(opt.collect_path.glob("*"))
-            opt.collect_ids = [cid_dir.name for cid_dir in opt.collect_ids]
+            opt.collect_ids = [
+                cid_dir.name for cid_dir in opt.collect_ids if cid_dir.is_dir()
+            ]
             print(opt.collect_ids)
         else:
             opt.collect_ids = str(opt.collect_ids).upper().split(",")
