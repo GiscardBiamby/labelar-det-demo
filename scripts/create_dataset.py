@@ -30,7 +30,6 @@ class LabelARToCOCO(object):
         self.collect_path: Path = opt.collect_path
 
     def convert(self):
-        self.fix_and_remap_cats()
         misspelled = self.get_mispelling_map()
         new_cats = self.get_new_cats(misspelled)
         old_to_new_cats = self.get_old_to_new_cat_mapping(misspelled, new_cats)
@@ -51,33 +50,15 @@ class LabelARToCOCO(object):
             print("For cid:", cid, "\n", coco_misp.dataset["categories"], "i: ", i)
 
     def get_mispelling_map(self):
-        # hardcode while i get the script up and running, but later pull this from a
-        # json file whose name matches opt.ds_name, located in dir: opt.collects_path
-        # misspelled = {
-        #     "FPLM": {"mug-blue-s": "mug-blu-s"},
-        #     "SWKW": {},
-        #     "3RPC": {
-        #         "0": "mug-wht-s",
-        #         "1": "mug-blu-t",
-        #         "2": "mug-wht-t",
-        #         "3": "mug-blu-s",
-        #         "4": "mug-red",
-        #     },
-        #     "VHR7": {},
-        #     "1DKT": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
-        #     "LYVP": {"mug-white-t": "mug-wht-t", "mug-white-s": "mug-wht-s"},
-        #     "KS9A": {},
-        # }
         label_remap_path: Path = opt.collect_path / "labelremap.json"
-        assert (
-            label_remap_path.exists()
-        ), f"Label remap file not found: {label_remap_path}"
-        assert (
-            label_remap_path.is_file()
-        ), f"Label remap path is not a file: {label_remap_path}"
-        with open(label_remap_path, "r") as JSON:
-            misspelled = json.load(JSON)
-
+        if label_remap_path.exists():
+            assert (
+                label_remap_path.is_file()
+            ), f"Label remap path is not a file: {label_remap_path}"
+            with open(label_remap_path, "r") as JSON:
+                misspelled = json.load(JSON)
+        else:
+            misspelled = {}
         print("\nUsing misspelling remaps: ", misspelled)
         return misspelled
 
@@ -110,11 +91,11 @@ class LabelARToCOCO(object):
     def remap_cat(self, cid, cat, misspelled):
         corrected_name = (
             misspelled[cid][cat["name"]]
-            if (cid in misspelled and c["name"] in misspelled[cid])
+            if (cid in misspelled and cat["name"] in misspelled[cid])
             else cat["name"]
         )
         if "all" in misspelled and cat["name"] in misspelled["all"]:
-            corrected_name = misspelled["all"][c["name"]]
+            corrected_name = misspelled["all"][cat["name"]]
         return corrected_name
 
     def get_old_to_new_cat_mapping(self, misspelled, new_cats):
@@ -167,10 +148,10 @@ class LabelARToCOCO(object):
         master_imgs, master_anns = [], []
 
         newImgFolder = self.output_dir / f"images/{opt.ds_name}_{opt.split}"
-        print("newimgfolder: ", newImgFolder)
+        print("newImgFolder: ", newImgFolder)
 
         # New image directory
-        if not os.path.exists(newImgFolder):
+        if not newImgFolder.exists():
             os.makedirs(newImgFolder)
 
         # for each collect
@@ -267,16 +248,16 @@ class opts(object):
     def __init__(self):
         self.parser: argparse.ArgumentParser = argparse.ArgumentParser()
         self.parser.add_argument(
-            "--collect_ids",
-            type=str,
-            required=True,
-            help="List of collect id's to include in the dataset. You can also specify 'all' for this value and all the collect_id's in the collect_path will be processed.",
-        )
-        self.parser.add_argument(
             "--ds_name", type=str, required=True, help="Name of the new dataset"
         )
         self.parser.add_argument(
             "--split", type=str, default="train", help="train | val"
+        )
+        self.parser.add_argument(
+            "--collect_ids",
+            type=str,
+            required=True,
+            help="List of collect id's to include in the dataset. You can also specify 'all' for this value and all the collect_id's in the collect_path will be processed.",
         )
         self.parser.add_argument(
             "--collect_path",
@@ -288,9 +269,19 @@ class opts(object):
             "--output_dir",
             type=Path,
             default=ROOT_DIR / "training/data",
-            help="Path to directory where the final COCO formatted dataset will be saved. The final dataset will be created in a subdirectory of this path, where the subdir name is the name of the created dataset.",
+            help="""Path to directory where the final COCO formatted dataset will be saved. The final dataset will be created in a subdirectory of this path, where the subdir name is the name of the created dataset.""",
         )
-        self.parser.add_argument("--dry_run", action="store_true")
+        self.parser.add_argument(
+            "--dry_run",
+            action="store_true",
+            help="Output merged/renamed categories, but don't do anything else.",
+        )
+        self.parser.add_argument(
+            "--delete_existing",
+            type=bool,
+            default=True,
+            help="Delete output_path before creating new dataset."
+        )
 
     def parse(self, args=""):
         """
@@ -312,7 +303,6 @@ class opts(object):
         # Output path:
         assert opt.output_dir.exists(), f"output_dir '{opt.output_dir}' does not exist"
         opt.output_dir: Path = opt.output_dir / f"{opt.ds_name}-{opt.split}"
-        opt.delete_existing = True
         output_dir: Path = opt.output_dir
         if opt.delete_existing:
             if opt.output_dir.exists():
