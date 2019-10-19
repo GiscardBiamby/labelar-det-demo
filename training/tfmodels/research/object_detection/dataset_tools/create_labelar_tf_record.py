@@ -293,7 +293,7 @@ def main(_):
         FLAGS.train_image_dir,
         train_output_path,
         FLAGS.include_masks,
-        num_shards=10,
+        num_shards=20,
     )
     _create_tf_record_from_coco_annotations(
         FLAGS.val_annotations_file,
