@@ -13,9 +13,9 @@ start_task() {
 
 cd ../training/tfmodels/research
 
-export DS_NAME="uist-mugs"
-export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugs"
-export INPUT_SIZE=512
+export DS_NAME="uist-mugs-v2"
+export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugsv2"
+export INPUT_SIZE=384
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=./object_detection/samples/configs/"ssd_${MODEL_NAME}.config"
 export NUM_TRAIN_STEPS=2500

@@ -248,6 +248,14 @@ def _create_labelmap_from_coco_annotations(
     # Write the .pbtxt label file used for training and eval:
     with open(label_output_path, "w") as labelmap_file:
         # labelmap_file.write("Hello\n")
+        labelmap_file.write(
+            f"""item {{
+    name: "background"
+    id: 0
+    display_name: "background"
+}}
+"""
+        )
         for cat in cats:
             labelmap_file.write(
                 f"""item {{

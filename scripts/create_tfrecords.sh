@@ -2,7 +2,7 @@
 set -e
 
 
-DS_NAME="uist-mugs"
+DS_NAME="uist-mugs-v2"
 DATA_DIR=../training/data
 OUTPUT_DIR="${DATA_DIR}/${DS_NAME}-tfrecords"
 
