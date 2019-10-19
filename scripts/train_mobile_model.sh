@@ -18,7 +18,7 @@ export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugsv2"
 export INPUT_SIZE=384
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=./object_detection/samples/configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=2500
+export NUM_TRAIN_STEPS=25000
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export MODEL_DIR=../../weights/"ssd_${MODEL_NAME}"
