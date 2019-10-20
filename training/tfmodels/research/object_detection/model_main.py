@@ -17,6 +17,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+import functools
+print = functools.partial(print, flush=True)
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"]="3"
 from absl import flags
