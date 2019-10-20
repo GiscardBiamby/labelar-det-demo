@@ -15,3 +15,4 @@ export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 # # Bazel:
 # echo "Adding '${HOME}/bin' to PATH (for Bazel)..."
 # export PATH="$PATH:$HOME/bin"
+cd -
