@@ -16,10 +16,10 @@ cd ../training/tfmodels/research
 export DS_NAME="uist-mugs-v2"
 export STEPS_PER_EPOCH=38
 export SAVE_CKPT_STEPS=160
-export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugsv2_debug"
+export MODEL_NAME="mobilenet_v2_quant_focal_uistmugsv2"
 export INPUT_SIZE=256
 # You may have to edit this .config to configure any of: dataset, model, training:
-export PIPELINE_CONFIG_PATH=./object_detection/samples/configs/"ssd_${MODEL_NAME}.config"
+export PIPELINE_CONFIG_PATH=../../exp_configs/"ssd_${MODEL_NAME}.config"
 export NUM_TRAIN_STEPS=25000
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
