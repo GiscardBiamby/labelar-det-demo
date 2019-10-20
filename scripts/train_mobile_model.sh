@@ -14,8 +14,10 @@ start_task() {
 cd ../training/tfmodels/research
 
 export DS_NAME="uist-mugs-v2"
-export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugsv2"
-export INPUT_SIZE=384
+export STEPS_PER_EPOCH=38
+export SAVE_CKPT_STEPS=160
+export MODEL_NAME="mobilenet_v2_fpn_shared_box_pred_uistmugsv2_debug"
+export INPUT_SIZE=256
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=./object_detection/samples/configs/"ssd_${MODEL_NAME}.config"
 export NUM_TRAIN_STEPS=25000
@@ -41,7 +43,7 @@ if [[ "${TRAIN}" == true ]]; then
         --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
         --model_dir=${MODEL_DIR} \
         --num_train_steps=${NUM_TRAIN_STEPS} \
-        --save_checkpoints_steps=500 \
+        --save_checkpoints_steps=${SAVE_CKPT_STEPS} \
         --eval_throttle_secs=0 \
         --sample_1_of_n_eval_examples="${SAMPLE_1_OF_N_EVAL_EXAMPLES}" \
         --alsologtostderr
