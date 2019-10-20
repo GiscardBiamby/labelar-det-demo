@@ -82,9 +82,11 @@ class LabelARToCOCO(object):
                 cats_merged.add(corrected_name)
 
         cats_merged_sorted = list(sorted(cats_merged))
-        new_cats = {}
+        new_cats = {
+            "background": {"supercategory": "", "id": 0, "name": "background"}
+        }
         for i, c in enumerate(cats_merged_sorted):
-            new_cats[c] = {"supercategory": "", "id": i, "name": c}
+            new_cats[c] = {"supercategory": "", "id": i+1, "name": c}
         print("new_cats (merged): ", new_cats)
         return new_cats
 
