@@ -17,10 +17,12 @@ COLLECT_IDS_TRAIN=( \
     "HVSU" "SQR4" "8NPZ" "8H6L" "TKWI" "AMT1" "ZH7O" "OUPY" "4AIN" "O5NO" \
     "M93C" "MRUX" "E9J9" "X9U5" "IFRL" "UCB4" "9NY4" "8SZF" "1JV4" "2669" \
     "9NQ6" "T829" "UAIA" "FWSJ" "W82D" "N5U1" "9YLE" "7R02" "NTO2" "G7ON" \
-    "M0H4" "GHUC" "Z9H9" "KWX4" "US2P" "YXF2" "DLDA"
+    "M0H4" "GHUC" "Z9H9" "KWX4" "US2P" "YXF2" "DLDA" \
+    "EVMW" "D2VS" "LA24" "O5XF" "X2K3"
 )
 COLLECT_IDS_VAL=(
-    "25HZ" "NU6K" "QVBF" "DMIW" "I4NB" "ETYY" "ZQVN" "G7F1" "74RP"
+    "25HZ" "NU6K" "QVBF" "DMIW" "I4NB" "ETYY" "ZQVN" "G7F1" "74RP" \
+    "KMXP" "Z0TD" "J1WM"
 )
 DS_PATH="../data/${DS_NAME}"
 
@@ -46,6 +48,7 @@ cd -
 # Re-copy collects to DS_PATH train and val subdirs:
 # Train:
 for cid in "${COLLECT_IDS_TRAIN[@]}"; do
+    echo "Copyin train files: '../data/uploads/${cid}/'"
     rsync -azvh "../data/uploads/${cid}/" "${DS_PATH}/train/${cid}/"
 done
 # Val:
@@ -60,10 +63,9 @@ python ./create_dataset.py \
     --collect_ids all \
     --collect_path "${DS_PATH}/train"
 
-
 ## Create COCO-formatted val dataset:
 python ./create_dataset.py \
     --ds_name "${DS_NAME}" \
     --split val \
     --collect_ids all \
-    --collect_path "${DS_PATH}/val"
+    --collect_path "${DS_PATH}/val" 

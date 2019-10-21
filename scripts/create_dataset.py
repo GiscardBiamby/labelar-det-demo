@@ -71,6 +71,7 @@ class LabelARToCOCO(object):
         cats_merged = set()
         for i, cid in enumerate(self.collect_ids):
             src_folder = self.collect_path / cid
+            print("Cid: ", cid, src_folder)
             json_files = list(src_folder.glob("*.json"))
             # load data as a COCO object
             with open(os.devnull, "w") as f, redirect_stdout(f):  # suppressed output
