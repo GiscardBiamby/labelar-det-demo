@@ -14,12 +14,16 @@ start_task() {
 cd ../training/tfmodels/research
 
 export DS_NAME="uist-mugs-v2"
-export SAVE_CKPT_STEPS=270
+export SAVE_CKPT_STEPS=120
 export INPUT_SIZE=416
-export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2"
+# export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2"
+export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_lrdebug"
+# export MODEL_NAME="resnet50_fpn_uistmugsv2"
+# export MODEL_NAME="mobilenet_v1_fpn_uistmugsv2"
+# export MODEL_NAME="mobilenet_v1_fpn_shared_box_predictor_640x640_uistmugs_sync"
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=../../exp_configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=2160
+export NUM_TRAIN_STEPS=2400
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export MODEL_DIR=../../weights/"ssd_${MODEL_NAME}"
@@ -28,10 +32,17 @@ export OUTPUT_DIR="${MODEL_DIR}/tflite"
 export USE_QUANTIZED=true
 export ANDROID_ASSET_PATH=../../../android/app/src/main/assets/"${MODEL_NAME}"
 
+DELETE_EXISTING=false
+if [[ -d "${MODEL_DIR}" ]]; then
+    echo "Deleting directory: '${MODEL_DIR}''"
+    rm -rf "${MODEL_DIR}"
+fi
+
 if [[ ! -d "${MODEL_DIR}" ]]; then
     echo "Creating directory: '${MODEL_DIR}''"
     mkdir -p "${MODEL_DIR}"
 fi
+
 
 ##
 ## Train model:
