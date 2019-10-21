@@ -101,7 +101,8 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
       final String modelFilename,
       final String labelFilename,
       final int inputSize,
-      final boolean isQuantized)
+      final boolean isQuantized,
+      final boolean useNNAPI)
       throws IOException {
     final TFLiteObjectDetectionAPIModel d = new TFLiteObjectDetectionAPIModel();
 
@@ -122,7 +123,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     try {
       d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
-      d.tfLite.setUseNNAPI(false);
+      d.tfLite.setUseNNAPI(true);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
@@ -144,6 +145,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
     d.outputClasses = new float[1][NUM_DETECTIONS];
     d.outputScores = new float[1][NUM_DETECTIONS];
     d.numDetections = new float[1];
+    d.setUseNNAPI(useNNAPI);
     return d;
   }
 
