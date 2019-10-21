@@ -35,7 +35,7 @@ fi
 
 ##
 ## Train model:
-export TRAIN=false
+export TRAIN=true
 if [[ "${TRAIN}" == true ]]; then
     start_task "Training model: ${MODEL_NAME}..."
     python -u object_detection/model_main.py \
@@ -56,7 +56,7 @@ echo "pipeline_config_path: ${PIPELINE_CONFIG_PATH}"
 echo "checkpoint_dir: ${CHECKPOINT_PATH}"
 python object_detection/model_main.py \
     --pipeline_config_path="${PIPELINE_CONFIG_PATH}" \
-    --checkpoint_dir=$"${MODEL_DIR}_bak" \
+    --checkpoint_dir=$"${MODEL_DIR}" \
     --run_once \
     --sample_1_of_n_eval_examples=1 \
     --alsologtostderr 
