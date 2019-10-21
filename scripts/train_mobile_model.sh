@@ -14,13 +14,12 @@ start_task() {
 cd ../training/tfmodels/research
 
 export DS_NAME="uist-mugs-v2"
-export STEPS_PER_EPOCH=38
-export SAVE_CKPT_STEPS=160
+export SAVE_CKPT_STEPS=270
+export INPUT_SIZE=416
 export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2"
-export INPUT_SIZE=256
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=../../exp_configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=650
+export NUM_TRAIN_STEPS=2160
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export MODEL_DIR=../../weights/"ssd_${MODEL_NAME}"
@@ -36,17 +35,17 @@ fi
 
 ##
 ## Train model:
-export TRAIN=true
+export TRAIN=false
 if [[ "${TRAIN}" == true ]]; then
     start_task "Training model: ${MODEL_NAME}..."
-    python object_detection/model_main.py \
+    python -u object_detection/model_main.py \
         --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
         --model_dir=${MODEL_DIR} \
-        --num_train_steps=${NUM_TRAIN_STEPS} \
         --save_checkpoints_steps=${SAVE_CKPT_STEPS} \
         --eval_throttle_secs=0 \
         --sample_1_of_n_eval_examples="${SAMPLE_1_OF_N_EVAL_EXAMPLES}" \
         --alsologtostderr
+        # --num_train_steps=${NUM_TRAIN_STEPS} \
 fi
 
 ##
@@ -56,11 +55,11 @@ echo ""
 echo "pipeline_config_path: ${PIPELINE_CONFIG_PATH}"
 echo "checkpoint_dir: ${CHECKPOINT_PATH}"
 python object_detection/model_main.py \
-    --pipeline_config_path=${PIPELINE_CONFIG_PATH} \
-    --checkpoint_dir=$"${MODEL_DIR}" \
+    --pipeline_config_path="${PIPELINE_CONFIG_PATH}" \
+    --checkpoint_dir=$"${MODEL_DIR}_bak" \
     --run_once \
     --sample_1_of_n_eval_examples=1 \
-    --alsologtostderr
+    --alsologtostderr 
 
 if [[ ! -d "${OUTPUT_DIR}" ]]; then
     echo "Creating directory: '${OUTPUT_DIR}''"

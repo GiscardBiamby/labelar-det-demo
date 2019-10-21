@@ -247,23 +247,24 @@ def _create_labelmap_from_coco_annotations(
     print("Cats: ", cats)
     # Write the .pbtxt label file used for training and eval:
     with open(label_output_path, "w") as labelmap_file:
-        # labelmap_file.write("Hello\n")
         for cat in cats:
-            labelmap_file.write(
-                f"""item {{
-    name: "{cat['name']}"
-    id: {int(cat['id'])}
-    display_name: "{cat['name']}"
-}}
-"""
-            )
+            if cat["name"] != "background":
+                labelmap_file.write(
+                    f"""item {{
+        name: "{cat['name']}"
+        id: {int(cat['id'])}
+        display_name: "{cat['name']}"
+    }}
+    """
+                )
     # Write the .txt label file used for the mobile app:
     label_path = label_output_path.parent / "labelmap.txt"
     print("Creating ", label_path)
     with open(label_path, "w") as labelmap_file:
         labelmap_file.write(f"???\n")
         for cat in cats:
-            labelmap_file.write(cat['name'] + "\n")
+            if cat["name"] != "background":
+                labelmap_file.write(cat['name'] + "\n")
 
 
 def main(_):
