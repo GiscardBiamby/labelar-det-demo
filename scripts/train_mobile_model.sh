@@ -23,7 +23,7 @@ export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_lrdebug"
 # export MODEL_NAME="mobilenet_v1_fpn_shared_box_predictor_640x640_uistmugs_sync"
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=../../exp_configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=2400
+export NUM_TRAIN_STEPS=9920
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export MODEL_DIR=../../weights/"ssd_${MODEL_NAME}"
@@ -32,11 +32,11 @@ export OUTPUT_DIR="${MODEL_DIR}/tflite"
 export USE_QUANTIZED=true
 export ANDROID_ASSET_PATH=../../../android/app/src/main/assets/"${MODEL_NAME}"
 
-DELETE_EXISTING=false
-if [[ -d "${MODEL_DIR}" ]]; then
-    echo "Deleting directory: '${MODEL_DIR}''"
-    rm -rf "${MODEL_DIR}"
-fi
+# DELETE_EXISTING=false
+# if [[ -d "${MODEL_DIR}" ]]; then
+#     echo "Deleting directory: '${MODEL_DIR}''"
+#     rm -rf "${MODEL_DIR}"
+# fi
 
 if [[ ! -d "${MODEL_DIR}" ]]; then
     echo "Creating directory: '${MODEL_DIR}''"
@@ -46,7 +46,7 @@ fi
 
 ##
 ## Train model:
-export TRAIN=true
+export TRAIN=false
 if [[ "${TRAIN}" == true ]]; then
     start_task "Training model: ${MODEL_NAME}..."
     python -u object_detection/model_main.py \
