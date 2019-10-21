@@ -18,11 +18,11 @@ COLLECT_IDS_TRAIN=( \
     "M93C" "MRUX" "E9J9" "X9U5" "IFRL" "UCB4" "9NY4" "8SZF" "1JV4" "2669" \
     "9NQ6" "T829" "UAIA" "FWSJ" "W82D" "N5U1" "9YLE" "7R02" "NTO2" "G7ON" \
     "M0H4" "GHUC" "Z9H9" "KWX4" "US2P" "YXF2" "DLDA" \
-    "EVMW" "D2VS" "LA24" "O5XF" "X2K3"
+    "EVMW" "D2VS" "LA24" "O5XF" "X2K3" \
 )
 COLLECT_IDS_VAL=(
     "25HZ" "NU6K" "QVBF" "DMIW" "I4NB" "ETYY" "ZQVN" "G7F1" "74RP" \
-    "KMXP" "Z0TD" "J1WM"
+    "KMXP" "Z0TD" "J1WM" \
 )
 DS_PATH="../data/${DS_NAME}"
 
