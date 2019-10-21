@@ -8,6 +8,12 @@ cd "${PROJ_ROOT}"/setup
 ./setup.sh
 ```
 
+Before you run any of the scripts in the ./scripts folder, from the repo root, run this: 
+
+```bash
+source ./init_env.sh
+```
+
 # Training
 See [./training/README.md](./training/README.md) for training instructions.
 
