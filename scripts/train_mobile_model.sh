@@ -14,8 +14,8 @@ start_task() {
 cd ../training/tfmodels/research
 
 export DS_NAME="uist-mugs-v2"
-export SAVE_CKPT_STEPS=120
-export INPUT_SIZE=416
+export SAVE_CKPT_STEPS=160
+export INPUT_SIZE=300
 # export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2"
 export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_lrdebug"
 # export MODEL_NAME="resnet50_fpn_uistmugsv2"
