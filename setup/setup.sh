@@ -109,5 +109,9 @@ fi
 if [[ ! -f coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip ]]; then
     wget https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip
 fi
+if [[ ! -f ssd_mobilenet_v2_coco_2018_03_29.tar.gz ]]; then
+    wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+fi
 unzip -f coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d ./coco_ssd_mobilenet_v1_1.0_quant
+# unzip -f ssd_mobilenet_v2_coco_2018_03_29.tar.gz -d ./ssd_mobilenet_v2_coco_2018_03_29
 cd -

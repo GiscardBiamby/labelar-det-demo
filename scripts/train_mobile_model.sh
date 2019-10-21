@@ -53,10 +53,15 @@ fi
 start_task "Evaluating model: ${MODEL_NAME}..."
 echo ""
 echo "pipeline_config_path: ${PIPELINE_CONFIG_PATH}"
-echo "checkpoint_dir: ${CHECKPOINT_PATH}"
-python object_detection/model_main.py \
+echo "checkpoint_dir: ${MODEL_DIR}"
+echo "checkpoint_path: ${CHECKPOINT_PATH}"
+# If you specify --checkpoint_path here it will force the eval to run on a specifick checkpoint,
+# for example you would want to do that if you want eval the model checkpoint from a specific step number.
+# we pass in --checkpoint_path=$CHECKPOINT_PATH, which uses $NUM_TRAIN_STEPS as the step number
+python -u object_detection/model_main.py \
     --pipeline_config_path="${PIPELINE_CONFIG_PATH}" \
     --checkpoint_dir=$"${MODEL_DIR}" \
+    --checkpoint_path="${CHECKPOINT_PATH}" \
     --run_once \
     --sample_1_of_n_eval_examples=1 \
     --alsologtostderr 

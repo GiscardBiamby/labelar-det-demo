@@ -22,8 +22,9 @@ print = functools.partial(print, flush=True)
 import os
 os.environ["TF_CPP_MIN_LOG_LEVEL"]="3"
 from absl import flags
-
+from pathlib import Path
 import tensorflow as tf
+from tensorflow.python.platform import tf_logging as logging
 
 from object_detection import model_hparams
 from object_detection import model_lib
@@ -52,6 +53,10 @@ flags.DEFINE_string(
 flags.DEFINE_string(
     'checkpoint_dir', None, 'Path to directory holding a checkpoint.  If '
     '`checkpoint_dir` is provided, this binary operates in eval-only mode, '
+    'writing resulting metrics to `model_dir`.')
+flags.DEFINE_string(
+    'checkpoint_path', None, 'Path to a specific checkpoint file.  If '
+    '`checkpoint_path` is provided, this binary operates in eval-only mode, '
     'writing resulting metrics to `model_dir`.')
 flags.DEFINE_boolean(
     'run_once', False, 'If running in eval-only mode, whether to run just '
@@ -92,7 +97,7 @@ def main(unused_argv):
   predict_input_fn = train_and_eval_dict['predict_input_fn']
   train_steps = train_and_eval_dict['train_steps']
 
-  if FLAGS.checkpoint_dir:
+  if FLAGS.checkpoint_dir or FLAGS.checkpoint_path:
     if FLAGS.eval_training_data:
       name = 'training_data'
       input_fn = eval_on_train_input_fn
@@ -101,10 +106,20 @@ def main(unused_argv):
       # The first eval input will be evaluated.
       input_fn = eval_input_fns[0]
     if FLAGS.run_once:
-      estimator.evaluate(input_fn,
-                         steps=None,
-                         checkpoint_path=tf.train.latest_checkpoint(
-                             FLAGS.checkpoint_dir))
+      if FLAGS.checkpoint_path:
+        ckpt_path = Path(FLAGS.checkpoint_path).resolve()
+        print("Using checkpoint: ", str(ckpt_path), flush=True)
+        logging.info(f"USING CHECKPOINT: {str(ckpt_path)}")
+        estimator.evaluate(input_fn,
+                              steps=None,
+                              checkpoint_path=str(ckpt_path))
+      elif FLAGS.checkpoint_dir:
+        print("USING CHECKPOINT_DIR: ", FLAGS.checkpoint_dir, flush=True)
+        logging.info(f"USING CHECKPOINT_DIR: {FLAGS.checkpoint_dir}")
+        estimator.evaluate(input_fn,
+                              steps=None,
+                              checkpoint_path=tf.train.latest_checkpoint(
+                                  FLAGS.checkpoint_dir))
     else:
       model_lib.continuous_eval(estimator, FLAGS.checkpoint_dir, input_fn,
                                 train_steps, name)
