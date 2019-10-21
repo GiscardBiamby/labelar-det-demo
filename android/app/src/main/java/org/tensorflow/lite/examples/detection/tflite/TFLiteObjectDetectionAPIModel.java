@@ -122,7 +122,7 @@ public class TFLiteObjectDetectionAPIModel implements Classifier {
 
     try {
       d.tfLite = new Interpreter(loadModelFile(assetManager, modelFilename));
-      d.tfLite.setUseNNAPI(true);
+      d.tfLite.setUseNNAPI(false);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
