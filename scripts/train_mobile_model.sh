@@ -17,13 +17,14 @@ export DS_NAME="uist-mugs-v2"
 export SAVE_CKPT_STEPS=160
 export INPUT_SIZE=300
 # export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2"
-export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_lrdebug"
+# export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_lrdebug"
+export MODEL_NAME="mobilenet_v2_quant_aug_uistmugsv2_final"
 # export MODEL_NAME="resnet50_fpn_uistmugsv2"
 # export MODEL_NAME="mobilenet_v1_fpn_uistmugsv2"
 # export MODEL_NAME="mobilenet_v1_fpn_shared_box_predictor_640x640_uistmugs_sync"
 # You may have to edit this .config to configure any of: dataset, model, training:
 export PIPELINE_CONFIG_PATH=../../exp_configs/"ssd_${MODEL_NAME}.config"
-export NUM_TRAIN_STEPS=9920
+export NUM_TRAIN_STEPS=3200
 export QUANTIZED_TRAINING=true
 export SAMPLE_1_OF_N_EVAL_EXAMPLES=1
 export MODEL_DIR=../../weights/"ssd_${MODEL_NAME}"
@@ -46,7 +47,7 @@ fi
 
 ##
 ## Train model:
-export TRAIN=false
+export TRAIN=true
 if [[ "${TRAIN}" == true ]]; then
     start_task "Training model: ${MODEL_NAME}..."
     python -u object_detection/model_main.py \
