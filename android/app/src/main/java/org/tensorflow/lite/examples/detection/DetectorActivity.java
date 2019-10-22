@@ -58,11 +58,12 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
 //  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_uistmugs";
 //  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_focal_uistmugs";
 //  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_aug_uistmugsv2";
-  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_aug_uistmugsv2_lrdebug";
+//  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_aug_uistmugsv2_lrdebug";
+  private static String TF_MODEL_TYPE = "mobilenet_v2_quant_aug_uistmugsv2_final";
 //  private static String TF_MODEL_TYPE = "coco_ssd_mobilenet_v1_1.0_quant_2018_06_29";
 //  private static String TF_MODEL_TYPE = "bidmugs";
   private static final int TF_OD_API_INPUT_SIZE = 300;
-  private static final boolean TF_OD_API_USENNAPI = true;
+  private static final boolean TF_OD_API_USENNAPI = false;
   private static final boolean TF_OD_API_IS_QUANTIZED = true;
   private static final String TF_OD_API_MODEL_FILE = TF_MODEL_TYPE + "/detect.tflite";
   private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/" + TF_MODEL_TYPE + "/labelmap.txt";
