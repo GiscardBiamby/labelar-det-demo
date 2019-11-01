@@ -2,7 +2,7 @@
 
 ## Setup
 
-Make sure you've run [../setup/setup.sh](../setup/setup.sh), see [../setup.md](../setup.md)
+Make sure you've run [../setup/setup.sh](../setup/setup.sh), see [../setup.md](../README.md)
 
 ## Run Training
 
